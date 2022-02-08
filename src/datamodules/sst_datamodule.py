@@ -1,6 +1,5 @@
 import datasets
 import pytorch_lightning as pl
-import torch
 from torch.utils.data import DataLoader
 from transformers import AutoTokenizer
 

@@ -12,14 +12,14 @@ def main(config: DictConfig):
 
     # Imports can be nested inside @hydra.main to optimize tab completion
     # https://github.com/facebookresearch/hydra/issues/934
-    from src.utils import utils
     from src.benchmark import benchmark
-    
+    from src.utils import utils
+
     # Pretty print config using Rich library
     if config.get("print_config"):
         utils.print_config(config, resolve=True)
-    
-    return benchmark(config) 
+
+    return benchmark(config)
 
 
 if __name__ == "__main__":

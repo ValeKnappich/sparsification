@@ -1,4 +1,4 @@
-import src.models
-import src.datamodules
-import src.callbacks
-import src.utils
+import src.callbacks  # noqa
+import src.datamodules  # noqa
+import src.models  # noqa
+import src.utils  # noqa
