@@ -1,0 +1,46 @@
+# @package _global_
+
+# specify here default training configuration
+defaults:
+  - _self_
+  - model: sst_model.yaml
+  - datamodule: sst_datamodule.yaml
+  - benchmark: default.yaml
+  
+  - override hydra/hydra_logging: disabled  
+  - override hydra/job_logging: disabled  
+  
+hydra:  
+  output_subdir: null  
+  run:  
+    dir: .
+
+# Logger info. Lightning loggers are not used for benchmarking bc using
+# Lightning trainer to run the prediction is too restrictive
+# Only wandb is supported here
+wandb:
+  project: "sst"
+  name: ${name}
+  job_type: "benchmark"
+  group: ""
+  tags: []
+    
+
+# path to original working directory
+# hydra hijacks working directory by changing it to the current log directory,
+# so it's useful to have this path as a special variable
+# https://hydra.cc/docs/next/tutorials/basic/running_your_app/working_directory
+work_dir: ${hydra:runtime.cwd}
+
+# path to folder with data
+data_dir: ${work_dir}/data/
+
+# pretty print config at the start of the run using Rich library
+print_config: True
+
+# seed for random number generators in pytorch, numpy and python.random
+seed: null
+
+# name of the run is accessed by loggers
+# should be used along with experiment mode
+name: null

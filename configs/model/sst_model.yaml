@@ -1,0 +1,4 @@
+_target_: src.models.sst_model.SSTModel
+
+lr: 1e-5
+model_id: distilroberta-base

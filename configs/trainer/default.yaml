@@ -1,6 +1,6 @@
 _target_: pytorch_lightning.Trainer
 
-gpus: 0
+gpus: -1
 
 min_epochs: 1
 max_epochs: 10
@@ -9,3 +9,9 @@ resume_from_checkpoint: null
 
 # number of validation steps to execute at the beginning of the training
 num_sanity_val_steps: 0
+
+# Log on every single step, bc fitting only takes about one epoch
+log_every_n_steps: 1
+
+# Check validation score 20 times per epoch
+val_check_interval: 0.05

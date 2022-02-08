@@ -4,10 +4,10 @@
 defaults:
   - _self_
   - trainer: default.yaml
-  - model: mnist_model.yaml
-  - datamodule: mnist_datamodule.yaml
+  - model: sst_model.yaml
+  - datamodule: sst_datamodule.yaml
   - callbacks: default.yaml
-  - logger: null # set logger here or use command line (e.g. `python run.py logger=wandb`)
+  - logger: wandb.yaml # set logger here or use command line (e.g. `python run.py logger=wandb`)
 
   - mode: default.yaml
 
@@ -18,8 +18,8 @@ defaults:
   - optional local: default.yaml
 
   # enable color logging
-  - override hydra/hydra_logging: colorlog
-  - override hydra/job_logging: colorlog
+  # - override hydra/hydra_logging: colorlog
+  # - override hydra/job_logging: colorlog
 
 # path to original working directory
 # hydra hijacks working directory by changing it to the current log directory,
@@ -34,7 +34,7 @@ data_dir: ${work_dir}/data/
 print_config: True
 
 # disable python warnings if they annoy you
-ignore_warnings: True
+ignore_warnings: False
 
 # evaluate on test set, using best model weights achieved during training
 # lightning chooses best weights based on metric specified in checkpoint callback
