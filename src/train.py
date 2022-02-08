@@ -1,4 +1,5 @@
 from typing import List, Optional
+import os
 
 import hydra
 from omegaconf import DictConfig
@@ -10,11 +11,13 @@ from pytorch_lightning import (
     seed_everything,
 )
 from pytorch_lightning.loggers import LightningLoggerBase
+import torch
 
 from src.utils import utils
 
 log = utils.get_logger(__name__)
 
+os.environ["TOKENIZERS_PARALLELISM"] = "true" if torch.cuda.is_available() else "false"
 
 def train(config: DictConfig) -> Optional[float]:
     """Contains training pipeline.
@@ -26,13 +29,17 @@ def train(config: DictConfig) -> Optional[float]:
     Returns:
         Optional[float]: Metric score for hyperparameter optimization.
     """
-
+    
     # Set seed for random number generators in pytorch, numpy and python.random
     if config.get("seed"):
-        seed_everything(config.seed, workers=True)
-
+        seed_everything(config.seed, workers=True)       
+        
+    
+    # pass same model_id from model config to datamodule to get correct tokenizer
+    config.datamodule["model_id"] = config.model.model_id
+     
     # Init lightning datamodule
-    log.info(f"Instantiating datamodule <{config.datamodule._target_}>")
+    log.info(f"Instantiating datamodule <{config.datamodule._target_}>")  
     datamodule: LightningDataModule = hydra.utils.instantiate(config.datamodule)
 
     # Init lightning model
