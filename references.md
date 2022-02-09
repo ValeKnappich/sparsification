@@ -1,0 +1,3 @@
+- [](https://huggingface.co/blog/bert-cpu-scaling-part-1)
+- [](https://www.reddit.com/r/MachineLearning/comments/sobfvm/p_what_we_learned_by_accelerating_by_5x_hugging/)
+- [](https://github.com/ELS-RD/transformer-deploy)
