@@ -7,19 +7,19 @@ from omegaconf import DictConfig
 dotenv.load_dotenv(override=True)
 
 
-@hydra.main(config_path="configs/", config_name="config_benchmark.yaml")
+@hydra.main(config_path="configs/", config_name="config_conversion.yaml")
 def main(config: DictConfig):
 
     # Imports can be nested inside @hydra.main to optimize tab completion
     # https://github.com/facebookresearch/hydra/issues/934
-    from src.benchmark import benchmark
+    from src.convert import convert
     from src.utils import utils
 
     # Pretty print config using Rich library
     if config.get("print_config"):
         utils.print_config(config, resolve=True)
 
-    return benchmark(config)
+    return convert(config)
 
 
 if __name__ == "__main__":

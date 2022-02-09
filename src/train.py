@@ -1,3 +1,4 @@
+import logging
 import os
 from typing import List, Optional
 
@@ -15,7 +16,9 @@ from pytorch_lightning.loggers import LightningLoggerBase
 
 from src.utils import utils
 
+logging.basicConfig()
 log = utils.get_logger(__name__)
+log.setLevel(logging.INFO)
 
 os.environ["TOKENIZERS_PARALLELISM"] = "true" if torch.cuda.is_available() else "false"
 

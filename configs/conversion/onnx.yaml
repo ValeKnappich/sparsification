@@ -1,2 +1,3 @@
+key: onnx
 checkpoint_path: checkpoints/distilroberta-base.ckpt
 sequence_length: 64

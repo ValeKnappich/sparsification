@@ -14,6 +14,7 @@ from torchmetrics import Accuracy, MeanAbsoluteError, MeanSquaredError
 from src.models import SSTModel
 from src.utils import utils
 
+logging.basicConfig()
 log = utils.get_logger(__name__)
 log.setLevel(logging.INFO)
 project_root = Path(__file__).parent.parent
