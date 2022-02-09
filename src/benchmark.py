@@ -1,3 +1,4 @@
+import logging
 import os
 import time
 from pathlib import Path
@@ -14,6 +15,7 @@ from src.models import SSTModel
 from src.utils import utils
 
 log = utils.get_logger(__name__)
+log.setLevel(logging.INFO)
 project_root = Path(__file__).parent.parent
 os.environ["TOKENIZERS_PARALLELISM"] = "true" if torch.cuda.is_available() else "false"
 
@@ -75,7 +77,7 @@ def benchmark(config: DictConfig):
         accuracy = Accuracy().to(device)
         mae = MeanAbsoluteError().to(device)
         mse = MeanSquaredError().to(device)
-
+        n_batches = 0
         start_time = time.time()
 
         for batch in tqdm.tqdm(dataloader_fn()):
@@ -88,6 +90,7 @@ def benchmark(config: DictConfig):
             accuracy(logits, torch.where(batch["label"] > 0.5, 1, 0))
             mae(logits, batch["label"])
             mse(logits, batch["label"])
+            n_batches += 1
 
         end_time = time.time()
 
@@ -96,7 +99,9 @@ def benchmark(config: DictConfig):
                 f"{dataset_split}_acc": accuracy.compute(),
                 f"{dataset_split}_mse": mse.compute(),
                 f"{dataset_split}_mae": mae.compute(),
-                f"{dataset_split}_total_time": end_time - start_time,
+                f"{dataset_split}_total_time (s)": end_time - start_time,
+                f"{dataset_split}_n_batches": n_batches,
+                f"{dataset_split}_time_per_batch (s)": (end_time - start_time) / n_batches,
                 **OmegaConf.to_container(config, resolve=True),
             }
         )
