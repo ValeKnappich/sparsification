@@ -9,24 +9,7 @@ class SSTDataModule(pl.LightningDataModule):
         super().__init__()
 
         self.tokenizer = AutoTokenizer.from_pretrained(model_id)
-
-        self.dataset_dict = (
-            datasets.load_dataset("sst").map(
-                lambda x: self.tokenizer(x["sentence"], padding="max_length", max_length=65)
-            )
-            # .map(
-            #     # Add or remove epsilone if labels are 1 or 0 to avoid error in BCELoss
-            #     lambda x: dict(
-            #         label=x["label"] - 1e-6
-            #         if x["label"] == 1
-            #         else x["label"] + 1e-6
-            #         if x["label"] == 0
-            #         else x["label"],
-            #         **{k: v for k, v in x.items() if k != "label"}
-            #     )
-            # )
-        )
-
+        self.dataset_dict = datasets.load_dataset("sst").map(self.preprocess)
         self.dataset_dict.set_format("torch", columns=["input_ids", "attention_mask", "label"])
         self.batch_size = batch_size
 
@@ -47,3 +30,6 @@ class SSTDataModule(pl.LightningDataModule):
 
     def test_dataloader(self):
         return self.dataloader("test")
+
+    def preprocess(self, example):
+        return self.tokenizer(example["sentence"], padding="max_length", max_length=65)
