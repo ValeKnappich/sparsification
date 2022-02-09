@@ -3,7 +3,6 @@
 # specify here default training configuration
 defaults:
   - _self_
-  - model: sst_model.yaml
   - datamodule: sst_datamodule.yaml
   - benchmark: default.yaml
 

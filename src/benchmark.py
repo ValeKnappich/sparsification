@@ -10,6 +10,7 @@ import wandb
 from omegaconf import DictConfig, OmegaConf
 from torchmetrics import Accuracy, MeanAbsoluteError, MeanSquaredError
 
+from src.models import SSTModel
 from src.utils import utils
 
 log = utils.get_logger(__name__)
@@ -32,28 +33,28 @@ def benchmark(config: DictConfig):
     """
     Benchmark a trained model to measure runtime and accuracy metrics
     """
+    # Init lightning model
+    log.info("Loading model")
+    checkpoint_path: Path = (project_root / config.benchmark.checkpoint_path).resolve()
+    model: pl.LightningModule = SSTModel.load_from_checkpoint(checkpoint_path)
 
-    # Pass model_id from model config to datamodule config to get correct tokenizer
-    config.datamodule["model_id"] = config.model.model_id
+    # Pass model_id from model to datamodule config to get correct tokenizer
+    config.datamodule["model_id"] = model.model_id
 
     # Init lightning datamodule
     log.info(f"Instantiating datamodule <{config.datamodule._target_}>")
     datamodule: pl.LightningDataModule = hydra.utils.instantiate(config.datamodule)
-
-    # Init lightning model
-    log.info(f"Instantiating model <{config.model._target_}>")
-    model_cls: type = hydra.utils._locate(config.model._target_)
-    checkpoint_path: Path = (project_root / config.benchmark.checkpoint_path).resolve()
-    model: pl.LightningModule = model_cls.load_from_checkpoint(checkpoint_path)
 
     # Init wandb
     log.info("Initializing wandb logger")
     wandb.init(**config.wandb, dir=(project_root / "logs").resolve())
 
     # Prepare device
-    device = torch.device("cuda:0") if torch.cuda.is_available() else torch.device("cpu")
-    if device.type != "cuda":
+    device = torch.device(config.benchmark.device)
+    if device.type == "cuda" and not torch.cuda.is_available():
         log.warning("Cuda is not available. Using CPU")
+        device = torch.device("cpu")
+    log.info(f"Running benchmark on {device.type}")
     wandb.log(dict(device=device.type))
 
     # Prepare model
