@@ -1,4 +1,5 @@
 _target_: src.datamodules.sst_datamodule.SSTDataModule
 
 batch_size: 32
-model_id: # Will be set in train.py from sst_model.yaml
+model_id: # Will be infered from model if possible
+tensor_format: torch

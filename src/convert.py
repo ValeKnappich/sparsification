@@ -43,8 +43,10 @@ def convert_to_onnx(model: pl.LightningModule, config: DictConfig):
         for field in ("input_ids", "attention_mask")
     }
     input_sample = {
-        "input_ids": torch.randint(0, 100, (1, config.conversion.sequence_length)),
-        "attention_mask": torch.zeros(1, config.conversion.sequence_length),
+        "input_ids": torch.randint(
+            0, 100, (1, config.conversion.sequence_length), dtype=torch.int32
+        ),
+        "attention_mask": torch.zeros(1, config.conversion.sequence_length, dtype=torch.int8),
     }
     model.to_onnx(out_path, input_sample, export_params=True, opset_version=11)
 
