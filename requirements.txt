@@ -4,6 +4,10 @@ torchvision>=0.11.0
 pytorch-lightning>=1.5.0
 torchmetrics>=0.6.0
 
+# --------- transformers --------- #
+transformers
+datasets
+
 # --------- runtime --------- #
 onnxruntime-gpu
 
@@ -29,3 +33,6 @@ scikit-learn    # used in some callbacks
 seaborn         # used in some callbacks
 jupyterlab      # better jupyter notebooks
 pudb            # debugger
+
+# --------- demo --------- #
+streamlit
