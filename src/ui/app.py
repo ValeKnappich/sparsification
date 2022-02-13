@@ -1,3 +1,9 @@
 import streamlit as st
 
-st.write("# Hello World")
+
+def build_app():
+    st.write("# Hello World")
+
+
+if __name__ == "__main__":
+    build_app()
