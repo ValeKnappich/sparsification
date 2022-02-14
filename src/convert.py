@@ -1,10 +1,9 @@
 import logging
-import os
 import time
 from pathlib import Path
-from typing import Callable
 
-import pytorch_lightning as pl
+import hydra
+import onnxruntime.quantization as ort_quant
 import torch
 from omegaconf import DictConfig
 
@@ -14,52 +13,44 @@ from src.utils import utils
 logging.basicConfig()
 log = utils.get_logger(__name__)
 log.setLevel(logging.INFO)
-project_root = Path(__file__).parent.parent
-os.environ["TOKENIZERS_PARALLELISM"] = "true" if torch.cuda.is_available() else "false"
-
-conversion_registry = {}
 
 
-def register_conversion(key: str):
-    def register_conversion_inner(f: Callable):
-        if key in conversion_registry:
-            log.warning(f"Multiple functions registered for key '{key}'")
-        conversion_registry[key] = f
-        return f
+def convert_to_onnx(config: DictConfig):
+    # Load model
+    checkpoint_path = (Path(config.work_dir) / config.checkpoint_path).resolve()
+    model = load_lightning(checkpoint_path)
 
-    return register_conversion_inner
-
-
-@register_conversion("onnx")
-def convert_to_onnx(model: pl.LightningModule, config: DictConfig):
-    out_path = (project_root / config.conversion.checkpoint_path).with_suffix(".onnx")
+    out_path = (Path(config.work_dir) / config.checkpoint_path).with_suffix(".onnx")
     if out_path.exists():
         # Add timestamp to filename
         out_path = Path(f"{out_path.with_suffix('')}-{int(time.time())}{out_path.suffix}")
     log.info(f"Saving ONNX model to path {out_path}")
 
     input_sample = {
-        field: torch.randn((1, config.conversion.sequence_length))
-        for field in ("input_ids", "attention_mask")
+        "input_ids": torch.randint(0, 100, (1, config.sequence_length), dtype=torch.int32),
+        "attention_mask": torch.ones(1, config.sequence_length, dtype=torch.int8),
     }
-    input_sample = {
-        "input_ids": torch.randint(
-            0, 100, (1, config.conversion.sequence_length), dtype=torch.int32
-        ),
-        "attention_mask": torch.zeros(1, config.conversion.sequence_length, dtype=torch.int8),
-    }
-    model.to_onnx(out_path, input_sample, export_params=True, opset_version=11)
+    model.to_onnx(out_path, input_sample, export_params=True, opset_version=14)
+
+
+def quantize_onnx(config: DictConfig):
+    checkpoint_path = (Path(config.work_dir) / config.checkpoint_path).resolve()
+    out_path = Path(f"{checkpoint_path.with_suffix('')}-quant.onnx")
+    if out_path.exists():
+        # Add timestamp to filename
+        out_path = Path(f"{out_path.with_suffix('')}-{int(time.time())}{out_path.suffix}")
+    log.info(f"Saving ONNX model to path {out_path}")
+    ort_quant.quantize_dynamic(checkpoint_path, out_path)
+
+
+def load_lightning(checkpoint_path: Path):
+    log.info("Loading model")
+    return SSTModel.load_from_checkpoint(checkpoint_path)
 
 
 def convert(config: DictConfig):
     """
     Benchmark a trained model to measure runtime and accuracy metrics
     """
-    # Init lightning model
-    log.info("Loading model")
-    checkpoint_path = (project_root / config.conversion.checkpoint_path).resolve()
-    model: pl.LightningModule = SSTModel.load_from_checkpoint(checkpoint_path)
-
-    # Run conversion
-    convert_fn = conversion_registry[config.conversion.key]
-    return convert_fn(model, config)
+    convert_fn = hydra.utils._locate(config.conversion._target_)
+    return convert_fn(config)

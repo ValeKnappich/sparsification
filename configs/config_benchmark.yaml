@@ -24,7 +24,7 @@ hydra:
 # Only wandb is supported here
 wandb:
   project: "sst"
-  name: ${name}
+  name: null
   job_type: "benchmark"
   group: ""
   tags: []
