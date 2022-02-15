@@ -26,7 +26,9 @@ jobs:
       - uses: actions/checkout@v2
       
       - name: get_revision
-        run: export LATEST_REVISION=`git rev-parse HEAD`
+        run: |
+          export LATEST_REVISION=`git rev-parse HEAD`
+          echo $LATEST_REVISION
         
       - name: debug
         run: echo $LATEST_REVISION
