@@ -16,7 +16,10 @@ def build_app(model: pl.LightningModule):
         out = model(tokens)
 
     st.write(out.item())
-    st.write("test")
+
+    import subprocess
+
+    st.write(subprocess.check_output(["cat", "/proc/cpuinfo"]))
 
 
 if __name__ == "__main__":
