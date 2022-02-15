@@ -3,7 +3,7 @@ import streamlit as st
 import transformers
 
 
-def build_app(model: pl.LightningModel):
+def build_app(model: pl.LightningModule):
     tokenizer = transformers.AutoTokenizer.from_pretrained(model.model_id)
 
     st.write("# Sentiment Analysis")
