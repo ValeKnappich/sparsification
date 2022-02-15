@@ -32,7 +32,12 @@ jobs:
         run: python3 -c 'v = [int(c) for c in open("VERSION").read().split(".")]; v[-1] += 1; open("VERSION", "w").write(".".join(str(c) for c in v))'
       
       - name: commit
-        run: git add VERSION; git commit -m "increment version"; git push
+        run: |
+          git config user.name "GitHub Actions Bot"
+          git config user.email "<>"
+          git add VERSION 
+          git commit -m "increment version"
+          git push
       
         
         
