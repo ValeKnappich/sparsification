@@ -25,14 +25,19 @@ jobs:
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
       - uses: actions/checkout@v2
       
-      - name: debug
-        run: ls -la; pwd; echo $GITHUB_WORKSPACE
-
-      - name: inc
-        run: python3 -c 'v = [int(c) for c in open("VERSION").read().split(".")]; v[-1] += 1; open("VERSION", "w").write(".".join(str(c) for c in v))'
-      
-      - name: commit
-        run: git add VERSION; git commit -m "increment version"; git push
+      - name: get_revision
+        run: export LATEST_REVISION=`git rev-parse HEAD`
+          
+      - name: update_huggingface_requirements
+        run: |
+          cd ..
+          git clone https://huggingface.co/spaces/ArsenieBoca/EfficientSentimentAnalysis
+          cd EfficientSentimentAnalysis
+          python -c 'import os; r = open("requirements.txt").read(); base = r[:r.rfind("@")+1]; open("requirements.txt", "w").write(base + os.environ["LATEST_REVISION"])'
+          git add requirements.txt
+          git commit -m "update pip revision"
+          git push
+          
       
         
         
