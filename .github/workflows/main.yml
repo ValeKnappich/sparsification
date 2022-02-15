@@ -29,11 +29,22 @@ jobs:
         env:
           HUGGINGFACE_PW: ${{ secrets.HUGGINGFACE_PW }}
         run: |
+          # Setup git
+          git config --global user.email "<>"
+          git config --global user.name "Github Action"
+          
+          # Get latest revision of this repo
           export LATEST_REVISION=`git rev-parse HEAD`
+          
+          # Clone Huggingface repo
           cd ..
           python3 -c 'import os; pw = os.environ["HUGGINGFACE_PW"]; os.system(f"git clone https://ArsenieBoca:{pw}@huggingface.co/spaces/ArsenieBoca/EfficientSentimentAnalysis")'
           cd EfficientSentimentAnalysis
+          
+          # Set requirements revision to latest revision
           python3 -c 'import os; r = open("requirements.txt").read(); base = r[:r.rfind("@")+1]; open("requirements.txt", "w").write(base + os.environ["LATEST_REVISION"])'
+          
+          # Push new requirements to huggingface
           git add requirements.txt
           git commit -m "update pip revision"
           git push
