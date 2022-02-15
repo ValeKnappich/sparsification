@@ -16,6 +16,7 @@ def build_app(model: pl.LightningModule):
         out = model(tokens)
 
     st.write(out.item())
+    st.write("test")
 
 
 if __name__ == "__main__":
