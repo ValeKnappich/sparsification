@@ -7,6 +7,7 @@ def build_app(model: pl.LightningModule):
     tokenizer = transformers.AutoTokenizer.from_pretrained(model.model_id)
 
     st.write("# Sentiment Analysis")
+    st.write("## test")
     st.info("The model used here is `distilroberta-base` trained on the `SST` dataset.")
 
     text_input = st.text_input("Text Input", "This is great")
