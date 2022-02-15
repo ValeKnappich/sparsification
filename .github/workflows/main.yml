@@ -25,18 +25,11 @@ jobs:
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
       - uses: actions/checkout@v2
       
-      - name: get_revision
-        run: |
-          export LATEST_REVISION=`git rev-parse HEAD`
-          echo $LATEST_REVISION
-        
-      - name: debug
-        run: echo $LATEST_REVISION
-          
       - name: update_huggingface_requirements
         env:
           HUGGINGFACE_PW: ${{ secrets.HUGGINGFACE_PW }}
         run: |
+          export LATEST_REVISION=`git rev-parse HEAD`
           cd ..
           python3 -c 'import os; pw = os.environ["HUGGINGFACE_PW"]; os.system(f"git clone https://ArsenieBoca:{pw}@huggingface.co/spaces/ArsenieBoca/EfficientSentimentAnalysis")'
           cd EfficientSentimentAnalysis
