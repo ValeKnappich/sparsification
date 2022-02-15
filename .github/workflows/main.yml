@@ -27,6 +27,9 @@ jobs:
       
       - name: get_revision
         run: export LATEST_REVISION=`git rev-parse HEAD`
+        
+      - name: debug
+        run: echo $LATEST_REVISION
           
       - name: update_huggingface_requirements
         env:
