@@ -33,7 +33,7 @@ jobs:
           HUGGINGFACE_PW: ${{ secrets.HUGGINGFACE_PW }}
         run: |
           cd ..
-          python3 -c 'import os; pw = os.environ["HUGGINGFACE_PW"]; os.system(f"git clone https://{ArsenieBoca}:{pw}@huggingface.co/spaces/ArsenieBoca/EfficientSentimentAnalysis")'
+          python3 -c 'import os; pw = os.environ["HUGGINGFACE_PW"]; os.system(f"git clone https://ArsenieBoca:{pw}@huggingface.co/spaces/ArsenieBoca/EfficientSentimentAnalysis")'
           cd EfficientSentimentAnalysis
           python3 -c 'import os; r = open("requirements.txt").read(); base = r[:r.rfind("@")+1]; open("requirements.txt", "w").write(base + os.environ["LATEST_REVISION"])'
           git add requirements.txt
