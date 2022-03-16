@@ -12,51 +12,28 @@
 
 ## Description
 
-What it does
+This project is a collection of experiments with the aim to efficiently run a BERT-based model. 
+The model is trained on the [SST dataset](https://huggingface.co/datasets/sst) for sentiment analysis.
+The following methods to accelerate inference were tested:
+
+- ONNX runtime
+- Quantization
+- Pruning
+
+The model is deployed as [Huggingface Space](https://huggingface.co/spaces/ArsenieBoca/EfficientSentimentAnalysis).
 
 ## How to run
 
-Install dependencies
+### Installation
 
 ```bash
 # clone project
-git clone https://github.com/YourGithubName/your-repo-name
-cd your-repo-name
-
-# [OPTIONAL] create conda environment
-conda create -n myenv python=3.8
-conda activate myenv
-
-# install pytorch according to instructions
-# https://pytorch.org/get-started/
+git clone https://github.com/ValeKnappich/sparsification
+cd sparsification
 
 # install requirements
-pip install -r requirements.txt
+pip install -e .
 ```
-
-Train model with default configuration
-
-```bash
-# train on CPU
-python run.py trainer.gpus=0
-
-# train on GPU
-python run.py trainer.gpus=1
-```
-
-Train model with chosen experiment configuration from [configs/experiment/](configs/experiment/)
-
-```bash
-python run.py experiment=experiment_name.yaml
-```
-
-You can override any parameter from command line like this
-
-```bash
-python run.py trainer.max_epochs=20 datamodule.batch_size=64
-```
-
----
 
 <br>
 <br>
