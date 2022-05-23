@@ -27,8 +27,10 @@ def convert_to_onnx(config: DictConfig):
     log.info(f"Saving ONNX model to path {out_path}")
 
     input_sample = {
-        "input_ids": torch.randint(0, 100, (1, config.sequence_length), dtype=torch.int32),
-        "attention_mask": torch.ones(1, config.sequence_length, dtype=torch.int8),
+        "input_ids": torch.randint(
+            0, 100, (config.batch_size, config.sequence_length), dtype=torch.int32
+        ),
+        "attention_mask": torch.ones(config.batch_size, config.sequence_length, dtype=torch.int8),
     }
     model.to_onnx(out_path, input_sample, export_params=True, opset_version=14)
 
@@ -40,7 +42,7 @@ def quantize_onnx(config: DictConfig):
         # Add timestamp to filename
         out_path = Path(f"{out_path.with_suffix('')}-{int(time.time())}{out_path.suffix}")
     log.info(f"Saving ONNX model to path {out_path}")
-    ort_quant.quantize_dynamic(checkpoint_path, out_path)
+    ort_quant.quantize_dynamic(checkpoint_path, out_path, use_external_data_format=True)
 
 
 def load_lightning(checkpoint_path: Path):

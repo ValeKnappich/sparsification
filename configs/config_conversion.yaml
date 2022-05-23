@@ -9,6 +9,7 @@ defaults:
 
 checkpoint_path: checkpoints/distilroberta-base.ckpt
 sequence_length: 65
+batch_size: 1
 
 hydra:
   output_subdir: null

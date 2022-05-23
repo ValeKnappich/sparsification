@@ -1,1 +1,1 @@
-_target_: src.convert.convert_to_onnx
+_target_: src.convert.quantize_onnx
